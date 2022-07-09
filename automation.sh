@@ -22,10 +22,30 @@ fi
 
 timestamp=$(date '+%d%m%Y-%H%M%S') 
 cd /var/log/apache2 
-tar -cf  /tmp/${krishna}-http-logs-${timestamps}.tar *.log
+tar -cf  /tmp/${name}-http-logs-${timestamps}.tar *.log
 
-if [[ -f /tem/${krishna}-httpd-logs-${timestamps}.tar ]] ;then
- aws s3 cp/temp/${krishna}-http-logs-${timestamps}.tar s3://${upgrad-krishna}/${krishna}-http-logs-${timestamps}.tar   
+if [[ -f /tem/${name}-httpd-logs-${timestamps}.tar ]] ;then
+ aws s3 cp/temp/${name}-http-logs-${timestamps}.tar s3://${upgrad-krishna}/${name}-http-logs-${timestamps}.tar   
 
+fi
+
+#task 3 
+
+docroot="/var/www/html"
+if [[ ! -f ${docroot}/inventory.html ]]; then
+echo -e 'Log Type\t-\tTime Created\t-\tTypeSize' > ${docroot}/inventory.html
+fi
+
+if [[ -f ${docroot}/inventory.html ]]; then
+echo -e 'Log Type\t-\tTime Created\t-\tType\t-\tSize' > ${docroot}/inventory.html
+fi
+
+if [[ -f ${docroot}/inventory.html ]]; then
+size=$(du -h /tmp/${name}-httpd-logs-${timestamp}.tar | awk '{print $1}')
+echo -e "httpd-logs\t-\t${timestamp}\t-\ttar\t-\t${size}" >> ${docroot}/inventory.html
+fi
+
+if [[ ! -f /etc/cron.d/automation ]]; then
+echo "* * * * * root /root/automation.sh" >> /etc/cron.d/automation
 fi
 
